@@ -12,9 +12,15 @@ This project combines **YOLOv2**([reference](https://arxiv.org/abs/1506.02640)) 
 
 ## Steps
 
-1. `make` the project;
-1. Download `yolo.weights` and `tiny-yolo.weights` by running `wget https://pjreddie.com/media/files/yolo.weights` and `wget https://pjreddie.com/media/files/tiny-yolo-voc.weights`;
-1. Copy a video file to the video folder, for example, `input.mp4`;
+1. Creación del entorno; crear un entorno con python3.7 a tu gusto;
+1. Ejecución  del  makefile;\
+2.1 Modificar en el makefile, las lineas 2 y 3 y poner susflags a 0 (OPENCV Y CUDNN).;\
+2.2 Introducir la variable PATH con el siguiente comando exportPATH=/usr/local/cuda-10.1/bin${PATH:+:${PATH}};\
+2.3 Instalar libreria cuda con comando sudo apt-getinstall nvidia-cuda-toolkit.;\
+2.4 En el makefile linea 49 y 51 cambiar el 8.0 por la versión de cuda que se disponga, en nuestro caso COM-MON+=-DGPU -I/usr/local/cuda-10.1/include/.;\
+2.5 Ejecutar el makefile.\;
+1. Descargar  los  pesos;\
+3.1 wget https://pjreddie.com/media/files/yolo.weights. Para los primeros pesos.\
 1. In the video folder, run `python video2img.py -i input.mp4` and then `python get_pkllist.py`;
 1. Return to root floder and run `python yolo_seqnms.py` to generate output images in `video/output`;
 1. If you want to reconstruct a video from these output images, you can go to the video folder and run `python img2video.py -i output`
