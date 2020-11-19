@@ -14,20 +14,20 @@ This project combines **YOLOv2**([reference](https://arxiv.org/abs/1506.02640)) 
 
 1. Creación del entorno; crear un entorno con python3.7 a tu gusto
 1. Ejecución  del  makefile\
-2.1 Modificar en el makefile, las lineas 2 y 3 y poner susflags a 0 (OPENCV Y CUDNN).\
-2.2 Introducir la variable PATH con el siguiente comando exportPATH=/usr/local/cuda-10.1/bin${PATH:+:${PATH}}\
+2.1 Modificar en el makefile, las lineas 2 y 3 y poner sus flags a 0 (OPENCV Y CUDNN).\
+2.2 Introducir la variable PATH con el siguiente comando export PATH=/usr/local/cuda-10.1/bin${PATH:+:${PATH}}\
 2.3 Instalar libreria cuda con comando sudo apt-getinstall nvidia-cuda-toolkit.\
-2.4 En el makefile linea 49 y 51 cambiar el 8.0 por la versión de cuda que se disponga, en nuestro caso COM-MON+=-DGPU -I/usr/local/cuda-10.1/include/.\
+2.4 En el makefile linea 49 y 51 cambiar el 8.0 por la versión de cuda que se disponga, en nuestro caso COMMON+=-DGPU -I/usr/local/cuda-10.1/include/.\
 2.5 Ejecutar el makefile.
 1. Descargar los pesos\
 3.1 wget https://pjreddie.com/media/files/yolo.weights. Para los primeros pesos. \
 3.2 wget https://pjreddie.com/media/files/yolov2-tiny.weights, para los segundos pesos.\
 3.3 Si va muy lento o no funciona, se puede  acceder  a la  pagina  https://pjreddie.com/darknet/yolo/  y  desde ahí descargar los pesos correspondientes a YOLOv2608x608  y  Tiny  YOLO,  y  guardarlos en la carpeta principal.
 1. Preprocesado  de  vídeo\
-4.1 En primer lugar, se introduce el vídeo a analizar en la carpeta llamada "video". Y se accede al directoriode esa carpeta.\
+4.1 En primer lugar, se introduce el vídeo a analizar en la carpeta llamada "video". Y se accede al directorio de esa carpeta.\
 4.2 En  el  script video2img.py introducir  parentesis  en todos los print.\
 4.3 Instalar opencv: pip  install  opencv-python.\
-4.4 python  video2img.py  -i  input.mp4para cambiar elvideo a imágenes. input.mp4 es el nombre del vídeo.\
+4.4 python  video2img.py  -i  input.mp4 para cambiar elvideo a imágenes. input.mp4 es el nombre del vídeo.\
 4.5 python getpkllist.py para obtener la lista con el nombre de los frames.
 1. Método  de  detección\
 5.1 Volver al directorio principal.\
@@ -49,7 +49,7 @@ This project combines **YOLOv2**([reference](https://arxiv.org/abs/1506.02640)) 
 5.11.3 Línea 113 por im  =  loadimage(bytes(image,’utf-8’),  0,  0).\
 5.12 En labelmaputil.py en   la   línea   116   sustituir tf.gfile.GFile(path,’r’) por tf.io.gfile.GFile(path,’r’).\
 5.13 Instalar pip install imageio.\
-5.14 En yolo_seqnms.\
+5.14 En yolo_seqnms:\
 5.14.1 Al principio del script incluir Import  imageio.\
 5.14.2 Sustituir la línea 288 por imageio.imwrite(’video/output/frame{}.jpg’.format(i),imageprocess).\
 5.14.3 En    la    l ́ınea    39    sustituirbox[0]==clsporstr(box[0],’utf-8’)==  cls.\
