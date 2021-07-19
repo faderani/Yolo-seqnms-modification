@@ -3,16 +3,16 @@ import numpy as np
 import cv2
 import time
 import copy
-import cPickle as pickle
+import pickle
 import os, sys
 from matplotlib import pyplot as plt
 from PIL import Image
 import scipy.misc
-import yolo_detection
-import visualization_utils as vis_util
-import label_map_util
+# import yolo_detection
+# import visualization_utils as vis_util
+# import label_map_util
 
-CLASSES=("__background__","person","bicycle","car","motorcycle","airplane","bus","train","truck","boat","traffic light","fire hydrant","stop sign","parking meter","bench","bird","cat","dog","horse","sheep","cow","elephant","bear","zebra","giraffe","backpack","umbrella","handbag","tie","suitcase","frisbee","skis","snowboard","sports ball","kite","baseball bat","baseball glove","skateboard","surfboard","tennis racket","bottle","wine glass","cup","fork","knife","spoon","bowl","banana","apple","sandwich","orange","broccoli","carrot","hot dog","pizza","donut","cake","chair","couch","potted plant","bed","dining table","toilet","tv","laptop","mouse","remote","keyboard","cell phone","microwave","oven","toaster","sink","refrigerator","book","clock","vase","scissors","teddy bear","hair drier","toothbrush")
+CLASSES=("__background__","hand")
 CONF_THRESH = 0.5
 NMS_THRESH = 0.3
 IOU_THRESH = 0.6
@@ -25,17 +25,28 @@ IOU_THRESH_DELETE = 0.3
 第四维：x1,y1,x2,y2,score
 '''
 def createInputs(res):
+    CLASSES = ("background", "hand")
     create_begin=time.time()
-    dets=[[] for i in CLASSES[1:]] #保存最终结果
+    dets=[[] for i in ["background", "hand"]] #保存最终结果
     for cls_ind,cls in enumerate(CLASSES[1:]): #类
         for frame_ind,frame in enumerate(res): #帧
             cls_boxes = np.zeros((len(res[frame_ind]), 4), dtype=np.float64)
             cls_scores = np.zeros((len(res[frame_ind]), 1), dtype=np.float64)
             for box_ind, box in enumerate(frame):
-                cls_boxes[box_ind][0] = box[2][0]-box[2][2]/2
-                cls_boxes[box_ind][1] = box[2][1]-box[2][3]/2
-                cls_boxes[box_ind][2] = box[2][0]+box[2][2]/2
-                cls_boxes[box_ind][3] = box[2][1]+box[2][3]/2
+                
+#                 cls_boxes[box_ind][0] = box[2][0]-box[2][2]/2
+#                 cls_boxes[box_ind][1] = box[2][1]-box[2][3]/2
+#                 cls_boxes[box_ind][2] = box[2][0]+box[2][2]/2
+#                 cls_boxes[box_ind][3] = box[2][1]+box[2][3]/2
+          
+                cls_boxes[box_ind][0] = box[2][0]
+                cls_boxes[box_ind][1] = box[2][1]
+                cls_boxes[box_ind][2] = box[2][2]
+                cls_boxes[box_ind][3] = box[2][3]
+          
+          
+          
+          
                 if box[0]==cls:
                     cls_scores[box_ind][0] = box[1]
                 else:
@@ -43,7 +54,7 @@ def createInputs(res):
             cls_dets = np.hstack((cls_boxes,cls_scores)).astype(np.float64)
             dets[cls_ind].append(cls_dets)
     create_end=time.time()
-    print 'create inputs: {:.4f}s'.format(create_end - create_begin)
+#     print 'create inputs: {:.4f}s'.format(create_end - create_begin)
     return dets
 
 def createLinks(dets_all):
@@ -87,7 +98,7 @@ def createLinks(dets_all):
             links_cls.append(links_frame)
         links_all.append(links_cls)
     link_end=time.time()
-    print 'link: {:.4f}s'.format(link_end - link_begin)
+#     print 'link: {:.4f}s'.format(link_end - link_begin)
     return links_all
 
 def maxPath(dets_all,links_all):
@@ -101,7 +112,7 @@ def maxPath(dets_all,links_all):
             rescore(dets_cls,rootindex,maxpath,maxsum)
             deleteLink(dets_cls,links_cls,rootindex,maxpath,IOU_THRESH_DELETE)
     max_end=time.time()
-    print 'max path: {:.4f}s'.format(max_end - max_begin)
+#     print 'max path: {:.4f}s'.format(max_end - max_begin)
 
 def nms(dets, thresh):
     """Pure Python NMS baseline."""
@@ -261,19 +272,19 @@ if __name__ == "__main__":
     pkllistfile.close()
     pkllist=[pkl.strip() for pkl in pkllist]
     load_end=time.time()
-    print 'load: {:.4f}s'.format(load_end - load_begin)
+    #print 'load: {:.4f}s'.format(load_end - load_begin)
 
     # detection
     detect_begin=time.time()
     res = yolo_detection.detect_imgs(pkllist, nms=0, thresh=0.25)
     detect_end=time.time()
-    print 'total detect: {:.4f}s'.format(detect_end - detect_begin)
+    #print 'total detect: {:.4f}s'.format(detect_end - detect_begin)
 
     # nms
     nms_begin=time.time()
     boxes, classes, scores = dsnms(res)
     nms_end=time.time()
-    print 'total nms: {:.4f}s'.format(nms_end - nms_begin)
+    #print 'total nms: {:.4f}s'.format(nms_end - nms_begin)
 
     # save&visualization
     save_begin=time.time()
@@ -286,7 +297,7 @@ if __name__ == "__main__":
         #plt.imshow(image_process)
         #plt.show()
         scipy.misc.imsave('video/output/frame{}.jpg'.format(i), image_process)
-        if i%100==0:
-            print 'finish writing image{}'.format(i)
+#         if i%100==0:
+#             print 'finish writing image{}'.format(i)
     save_end=time.time()
-    print 'total writing images: {:.4f}s'.format(save_end - save_begin)
+    #print 'total writing images: {:.4f}s'.format(save_end - save_begin)
